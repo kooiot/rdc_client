@@ -1,6 +1,7 @@
 local proto = require "proto"
 local sproto = require "sproto"
 local class = require 'middleclass'
+local log = require 'utils.log'
 
 local host = sproto.new(proto.s2c):host "package"
 local request = host:attach(sproto.new(proto.c2s))
@@ -51,23 +52,23 @@ function spclass:send_request(name, args)
 	self._session = self._session + 1
 	local str = request(name, args, self._session)
 	send_package(self._sock, str)
-	print("Request:", self._session)
+	log.debug("Request:", self._session)
 end
 
 local function print_request(name, args)
-	print("REQUEST", name)
+	log.trace("REQUEST", name)
 	if args then
 		for k,v in pairs(args) do
-			print(k,v)
+			log.trace(k,v)
 		end
 	end
 end
 
 local function print_response(session, args)
-	print("RESPONSE", session)
+	log.trace("RESPONSE", session)
 	if args then
 		for k,v in pairs(args) do
-			print(k,v)
+			log.trace(k,v)
 		end
 	end
 end

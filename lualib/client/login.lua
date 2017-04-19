@@ -1,5 +1,6 @@
 local crypt = require "crypt"
 local class = require "middleclass"
+local log = require 'utils.log'
 
 local loginclass = class("LoginClass")
 
@@ -71,7 +72,7 @@ local function do_login(sock, server, user, passwd)
 	writeline(sock, crypt.base64encode(crypt.dhexchange(clientkey)))
 	local secret = crypt.dhsecret(crypt.base64decode(readline()), clientkey)
 
-	print("sceret is ", crypt.hexencode(secret))
+	log.debug("sceret is ", crypt.hexencode(secret))
 
 	local hmac = crypt.hmac64(challenge, secret)
 	writeline(sock, crypt.base64encode(hmac))
@@ -92,7 +93,7 @@ local function do_login(sock, server, user, passwd)
 
 	local subid = crypt.base64decode(string.sub(result, 5))
 
-	print("login ok, subid=", subid)
+	log.debug("login ok, subid=", subid)
 
 	return subid, secret
 end

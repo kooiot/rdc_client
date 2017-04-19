@@ -1,7 +1,9 @@
 local skynet = require 'skynet'
 local socket = require 'socket'
 local crypt = require 'crypt'
+local log = require 'utils.log'
 
+local TIMEOUT = 100 * 5
 
 local function load_token()
 	return skynet.call("CFG", "lua", "get", "RDC.Cient.token") or {
@@ -14,33 +16,26 @@ end
 local function load_server()
 	return skynet.call("CFG", "lua", "get", "RDC.Client.server") or {
 		ip = '127.0.0.1',
-		port = 8001
+		login = 8001,
+		gate = 8888,
 	}
 end
 
-local function test()
+local function make_sock(fd)
+	local fd = fd
+	return {
+		send = function(self, data)
+			return socket.write(fd, data)
+		end,
+		recv = function(self)
+			return assert(socket.read(fd))
+		end,
+	}
+end
+
+local start_work
+local function start_gate_conn(login, server, subid, secret, index)
 	local token = load_token()
-	local server = load_server()
-	local fd = socket.open(server.ip, server.port)
-
-	local function make_sock(fd)
-		local fd = fd
-		return {
-			send = function(self, data)
-				return socket.write(fd, data)
-			end,
-			recv = function(self)
-				return socket.read(fd)
-			end,
-		}
-	end
-
-	local login = require("client.login"):new(make_sock(fd))
-
-	local r, subid, secret = assert(login:login(token.server, token.user, token.passwd))
-	socket.close(fd)
-
-	print("login ok, subid=", subid)
 
 	----- connect to game server
 	local function unpack_package(text)
@@ -63,10 +58,13 @@ local function test()
 	end
 
 	local text = "echo"
-	local index = 1
+	local index = index or 1
 
-	print("connect")
-	local fd = assert(socket.open("127.0.0.1", 8888))
+	local fd = socket.open(server.ip, server.gate)
+	if not fd then
+		log.warning("Connecting to RDC Gate Server failed, retry in 5 seconds!")
+		return skynet.timeout(TIMEOUT, start_work)
+	end
 	local readpackage = login.unpacker(make_sock(fd), unpack_package)
 
 	local handshake = string.format("%s@%s#%s:%d", crypt.base64encode(token.user), crypt.base64encode(token.server),crypt.base64encode(subid) , index)
@@ -74,35 +72,54 @@ local function test()
 
 	send_package(fd, handshake .. ":" .. crypt.base64encode(hmac))
 
-	print(readpackage())
-
-	print("disconnect")
-	socket.close(fd)
-
-	index = index + 1
-
-	print("connect again")
-	fd = assert(socket.open("127.0.0.1", 8888))
-	readpackage = login.unpacker(make_sock(fd), unpack_package)
-
-	local gate_client = require 'client.gate':new(make_sock(fd))
-
-	local handshake = string.format("%s@%s#%s:%d", crypt.base64encode(token.user), crypt.base64encode(token.server),crypt.base64encode(subid) , index)
-	local hmac = crypt.hmac64(crypt.hashkey(handshake), secret)
-
-	send_package(fd, handshake .. ":" .. crypt.base64encode(hmac))
-
-	print(readpackage())
-
-	gate_client:send_request("handshake")
-	while true do
-		gate_client:dispatch_package()
+	local status = readpackage()
+	if tonumber(status:sub(1, 3)) ~= 200 then
+		socket.close(fd)
+		log.error("Connect to gate failed", status)
+		return skynet.timeout(TIMEOUT, function() 
+			return start_gate_conn(login, server, subid, secret, index + 1) 
+		end)
 	end
 
-	print("disconnect")
+	local gate_client = require 'client.gate':new(make_sock(fd))
+	gate_client:send_request("handshake")
+	local fd_ok = true
+	while fd_ok do
+		fd_ok = pcall(gate_client.dispatch_package, gate_client)
+	end
+
+	log.warning("disconnect")
 	socket.close(fd)
+
+	return skynet.timeout(TIMEOUT, function() 
+		return start_gate_conn(login, server, subid, secret, index + 1) 
+	end)
+end
+
+start_work = function()
+	local token = load_token()
+	local server = load_server()
+	log.info("Connecting to RDC Server:", server.ip, server.login)
+	local fd = socket.open(server.ip, server.login)
+	if not fd then
+		log.warning("Connecting to RDC Server failed, retry in 5 seconds!")
+		return skynet.timeout(TIMEOUT, start_work)
+	end
+
+	local login = require("client.login"):new(make_sock(fd))
+
+	local r, subid, secret = login:login(token.server, token.user, token.passwd)
+	socket.close(fd)
+	if not r then
+		log.error("Login failed", subid)
+		return skynet.timeout(TIMEOUT * 6, start_work)
+	end
+
+	log.debug("login ok, subid=", subid)
+
+	return start_gate_conn(login, server, subid, secret)
 end
 
 skynet.start(function()
-	skynet.fork(test)
+	skynet.fork(start_work)
 end)
