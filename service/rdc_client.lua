@@ -28,10 +28,17 @@ local function make_sock(fd)
 			return socket.write(fd, data)
 		end,
 		recv = function(self)
+			--return socket.read(fd)
 			return assert(socket.read(fd))
 		end,
 	}
 end
+
+local handler = {
+	heartbeat = function(args)
+		print('HEARTBEAT')
+	end
+}
 
 local start_work
 local function start_gate_conn(login, server, subid, secret, index)
@@ -81,11 +88,15 @@ local function start_gate_conn(login, server, subid, secret, index)
 		end)
 	end
 
-	local gate_client = require 'client.gate':new(make_sock(fd))
+	local gate_client = require 'client.gate':new(make_sock(fd), handler)
 	gate_client:send_request("handshake")
 	local fd_ok = true
+	local err = nil
 	while fd_ok do
-		fd_ok = pcall(gate_client.dispatch_package, gate_client)
+		fd_ok, err = pcall(gate_client.dispatch_package, gate_client)
+		if not fd_ok then
+			log.trace(err)
+		end
 	end
 
 	log.warning("disconnect")

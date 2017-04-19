@@ -42,43 +42,58 @@ local function recv_package(sock, last)
 	return unpack_package(last .. r)
 end
 
-function spclass:initialize(sock)
+function spclass:initialize(sock, handler)
 	self._sock = sock
 	self._session = 0
 	self._last = ""
+	self._handler = handler
+	self._cbs = {}
 end
 
-function spclass:send_request(name, args)
+function spclass:send_request(name, args, response_callback)
 	self._session = self._session + 1
 	local str = request(name, args, self._session)
 	send_package(self._sock, str)
 	log.debug("Request:", self._session)
+	if response_callback then
+		self._cbs[self._session] = response_callback
+	end
 end
 
-local function print_request(name, args)
+function spclass:__handle_request(name, args)
 	log.trace("REQUEST", name)
 	if args then
 		for k,v in pairs(args) do
 			log.trace(k,v)
 		end
 	end
+	
+	local h = self._handler[string.lower(name)] or function(args)
+		log.warning('COMMAND has no handler', name)
+	end
+	h(args)
 end
 
-local function print_response(session, args)
+function spclass:__handle_response(session, args)
 	log.trace("RESPONSE", session)
 	if args then
 		for k,v in pairs(args) do
 			log.trace(k,v)
 		end
 	end
+
+	if self._cbs[session] then
+		self._cbs[session](args)
+		self._cbs[session] = nil
+	end
 end
 
-local function print_package(t, ...)
+function spclass:__handle_package(t, ...)
 	if t == "REQUEST" then
-		print_request(...)
+		self:__handle_request(...)
 	else
 		assert(t == "RESPONSE")
-		print_response(...)
+		self:__handle_response(...)
 	end
 end
 
@@ -90,7 +105,7 @@ function spclass:dispatch_package()
 			break
 		end
 
-		print_package(host:dispatch(v))
+		self:__handle_package(host:dispatch(v))
 	end
 end
 
