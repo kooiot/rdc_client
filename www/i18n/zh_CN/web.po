@@ -1,0 +1,218 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "ALIAS"
+msgstr ""
+
+msgid "About"
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
+msgid "Alias"
+msgstr ""
+
+msgid "All Mails"
+msgstr ""
+
+msgid "All Messages"
+msgstr ""
+
+msgid "Application"
+msgstr ""
+
+msgid "CLA"
+msgstr ""
+
+msgid "Change"
+msgstr ""
+
+msgid "Commit"
+msgstr ""
+
+msgid "Conf"
+msgstr ""
+
+msgid "Configuration"
+msgstr ""
+
+msgid "Content"
+msgstr ""
+
+msgid "Contribute"
+msgstr ""
+
+msgid "Controls"
+msgstr ""
+
+msgid "Create Applicatoin"
+msgstr ""
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Desc"
+msgstr ""
+
+msgid "Development Reference"
+msgstr ""
+
+msgid "Device Template"
+msgstr ""
+
+msgid "Device UUID Key"
+msgstr ""
+
+msgid "DeviceID"
+msgstr ""
+
+msgid "Devices"
+msgstr ""
+
+msgid "Failed to send delete key request!!"
+msgstr ""
+
+msgid "Gate"
+msgstr ""
+
+msgid "Help"
+msgstr ""
+
+msgid "Help Make KooIoT Better"
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+msgid "Issue Tracker"
+msgstr ""
+
+msgid "KEY"
+msgstr ""
+
+msgid "Key"
+msgstr ""
+
+msgid "Key has been deleted"
+msgstr ""
+
+msgid "KooIoT Network"
+msgstr ""
+
+msgid "KooIoT Platform. Please follow us on GitHub!!!"
+msgstr ""
+
+msgid "Login"
+msgstr ""
+
+msgid "Logout"
+msgstr ""
+
+msgid "Mails"
+msgstr ""
+
+msgid "Manufacturer"
+msgstr ""
+
+msgid "Memory"
+msgstr ""
+
+msgid "Messages"
+msgstr ""
+
+msgid "Mode"
+msgstr ""
+
+msgid "Model"
+msgstr ""
+
+msgid "NO."
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Node"
+msgstr ""
+
+msgid "Nodes"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "ParentID"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Port"
+msgstr ""
+
+msgid "Profile"
+msgstr ""
+
+msgid "Request compeleted"
+msgstr ""
+
+msgid "Restart"
+msgstr ""
+
+msgid "Server"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Sign Up"
+msgstr ""
+
+msgid "SignIn"
+msgstr ""
+
+msgid "Starter"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Streams"
+msgstr ""
+
+msgid "System Controls"
+msgstr ""
+
+msgid "System Information"
+msgstr ""
+
+msgid "System Management"
+msgstr ""
+
+msgid "Tasks"
+msgstr ""
+
+msgid "Translation Hub"
+msgstr ""
+
+msgid "Uptime"
+msgstr ""
+
+msgid "User Documents"
+msgstr ""
+
+msgid "User details"
+msgstr ""
+
+msgid "Welcome"
+msgstr ""
+
+msgid "You need to restart system to apply MODE change!"
+msgstr ""
+
+msgid "Your Mails"
+msgstr ""

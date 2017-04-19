@@ -1,0 +1,50 @@
+<? extend 'layout.html' ?>
+
+<div class="main container">
+	<h2 class="ui dividing header"><?=_("Devices")?></h2>
+
+	<div class="ui styled fluid accordion">
+	<? for id, devs in pairs(devices) do ?>
+		<div class="active title">
+			<i class="dropdown icon"></i>
+			<?=_("Node")?> <?=id?>
+		</div>
+		<div class="active content">
+			<table class="ui celled table">
+				<thead>
+					<tr>
+						<th><?=_("NO.")?></th>
+						<th><?=_("DeviceID")?></th>
+						<th><?=_("Name")?></th>
+						<th><?=_("ParentID")?></th>
+						<th><?=_("Status")?></th>
+						<th><?=_("Manufacturer")?></th>
+						<th><?=_("Model")?></th>
+					</tr>
+				</thead>
+				<tbody>
+					<? for i, dev in ipairs(devs) do ?>
+					<? if dev.Status == 'ON' then ?>
+					<tr class="positive">
+					<? else ?>
+					<tr class="negative">
+					<? end ?>
+						<td><?=i?></td>
+						<td><?=dev.DeviceID?></td>
+						<td><?=dev.Name?></td>
+						<td><?=dev.ParentID?></td>
+						<td>
+							<i class="icon <?=dev.Status=='ON' and 'checkmark' or 'close'?>"></i>
+						       	<?=_(dev.Status)?>
+						</td>
+						<td><?=_(dev.Manufacturer)?></td>
+						<td><?=_(dev.Model)?></td>
+					</tr>
+					<? end ?>
+				</tbody>
+			</table>
+		</div>
+	<? end ?>
+	</div>
+</div>
+

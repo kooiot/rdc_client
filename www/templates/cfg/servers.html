@@ -1,0 +1,102 @@
+<? extend 'layout.html' ?>
+<div class="main container">
+	<h2 class="ui dividing header"><?=_("Servers")?></h2>
+
+	<div class="ui segment">
+		<h2 class="ui dividing header"><?=_("Server List")?></h2>
+		<table class="ui celled table">
+			<thead>
+				<tr>
+					<th><?=_("SSID")?></th>
+					<th><?=_("ID")?></th>
+					<th><?=_("Realm")?></th>
+					<th><?=_("Password")?></th>
+					<th><?=_("Host")?></th>
+					<th><?=_("Port")?></th>
+					<th><?=_("Status")?></th>
+					<th><?=_("Operation")?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<? for k,v in pairs(servers) do ?>
+				<tr>
+					<td><?=v.ssid?></td>
+					<td><?=v.srvid?></td>
+					<td><?=v.srvrealm?></td>
+					<td><?=v.passwd?></td>
+					<td><?=v.host?></td>
+					<td><?=v.port?></td>
+					<td><?=_(v.status)?></td>
+					<td>
+						<a class="ui red tiny button" onclick="delete_server('<?=v.srvid?>')"> <?=_("Delete")?></a>
+					</td>
+				</tr>
+				<? end ?>
+			</tbody>
+		</table>
+		<h2 class="ui dividing header"><?=_('Add more Server')?></h2>
+		<form class="ui form" method="post">
+			<div class="fields">
+				<input name="action" type="hidden" value="add"/>
+				<div class="field">
+					<label><?=_("Type")?></label>
+					<select class="ui dropdown" name="server_type"> 
+						<option value="UDP" checked="checked">UDP</option> 
+						<option value="TCP">TCP</option> 
+					</select>
+				</div>
+				<div class="field">
+					<label><?=_("Host")?></label>
+					<input name="server_host" type="text" place_holder="Server Host"/>
+				</div>
+				<div class="field">
+					<label><?=_("Port")?></label>
+					<input name="server_port" type="number" place_holder="Server Port"/>
+				</div>
+				<div class="field">
+					<label><?=_("ID")?></label>
+					<input name="server_srvid" type="text" place_holder="GB281818 ID"/>
+				</div>
+				<div class="field">
+					<label><?=_("Realm")?></label>
+					<input name="server_srvrealm" type="text" place_holder="GB28181 Realm"/>
+				</div>
+				<div class="field">
+					<label><?=_("Password")?></label>
+					<input name="server_passwd" type="password" place_holder="Password"/>
+				</div>
+			</div>
+			<input type="submit" class="ui teal submit button" value="<?=_('Add')?>"/>
+		</form>
+		<div class="ui attached message">
+			<div class="header">
+				<div id="status">
+					<? = err ?>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+function delete_server(name) {
+	$.post("", {action:'remove', server_srvid:name}, function(data) {
+		window.location.reload();
+	})
+	.done(function() {
+	})
+	.fail(function(data) {
+		$('#status').html('<i>' + data.responseText + '</i>');
+	});
+}
+$(document).ready(function() {
+	$('form').ajaxForm({
+		success: function(data) {
+			window.location.reload();
+		},
+		error: function(data) {
+			$('#status').html('<i>' + data.responseText + '</i>');
+		},
+	});
+});
+</script>

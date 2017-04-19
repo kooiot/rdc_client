@@ -1,0 +1,113 @@
+<? extend 'layout.html' ?>
+<div class="main container">
+	<h2 class="ui dividing header"><?=_("Nodes")?></h2>
+
+	<div class="ui segment">
+		<h2 class="ui dividing header"><?=_("Nodes List")?></h2>
+		<table class="ui celled table">
+			<thead>
+				<tr>
+					<th><?=_("NO.")?></th>
+					<th><?=_("ID")?></th>
+					<th><?=_("Realm")?></th>
+					<th><?=_("Password")?></th>
+					<th><?=_("Agent")?></th>
+					<th><?=_("IP")?></th>
+					<th><?=_("Port")?></th>
+					<th><?=_("Status")?></th>
+					<th><?=_("Expires")?></th>
+					<th><?=_("SKT_ID")?></th>
+					<th><?=_("Operation")?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<? local no = 0
+				for k,v in pairs(nodes) do
+	 				no = no + 1
+			       	?>
+				<tr>
+					<td><?=no?></td>
+					<td><?=v.id?></td>
+					<td><?=v.realm?></td>
+					<td><?=v.password?></td>
+					<td><?=v.agent?></td>
+					<td><?=v.host?></td>
+					<td><?=v.port?></td>
+					<td><?=_(v.status)?></td>
+					<td><?=v.expires?></td>
+					<td><?=v.sktid?></td>
+					<td>
+						<a class="ui red tiny button" onclick="delete_node('<?=v.id?>')"> <?=_("Delete")?></a>
+						<a class="ui red tiny button" onclick="clean_node('<?=v.id?>')"> <?=_("Clean")?></a>
+					</td>
+				</tr>
+				<? end ?>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="ui segment">
+		<form class="ui form" method="post">
+			<div class="inline fields">
+				<input name="action" type="hidden" value="add"/>
+				<div class="field">
+					<label><?=_("ID")?></label>
+					<input name="node_id" type="text" place_holder="28181 ID"/>
+				</div>
+				<div class="field">
+					<label><?=_("Realm")?></label>
+					<input name="node_realm" type="text" place_holder="28181 Realm"/>
+				</div>
+				<div class="field">
+					<label><?=_("Password")?></label>
+					<input name="node_password" type="password" place_holder="Password"/>
+				</div>
+				<input type="submit" class="ui mini teal submit button" value="<?=_('Add')?>"/>
+			</div>
+		</form>
+
+		<div class="ui attached message">
+			<div class="header">
+				<div id="status">
+					<? = err ?>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	function delete_node(id) {
+		$.post("", {action:'remove', node_id:id}, function(data) {
+				alert('<?=_("Node has been deleted")?>');
+				window.location.reload();
+				})
+		.done(function() {
+				})
+		.fail(function() {
+				alert("<?=_('Failed to send delete node request!!')?>");
+				});
+	}
+	function clean_node(id) {
+		$.post("", {action:'clean', node_id:id}, function(data) {
+				alert('<?=_("Node devices has been cleaned")?>');
+				window.location.reload();
+				})
+		.done(function() {
+				})
+		.fail(function() {
+				alert("<?=_('Failed to send clean node device request!!')?>");
+				});
+	}
+	$(document).ready(function() {
+			$('form').ajaxForm({
+				success: function(data) {
+					alert('<?=_("Node add successed")?>');
+					window.location.reload();
+				},
+				error: function(data) {
+					$('#status').html('<i>' + data.responseText + '</i>');
+				},
+			});
+	});
+</script>

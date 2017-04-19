@@ -1,0 +1,7 @@
+<? extend 'layout.html' ?>
+<div class="main container">
+	<h2 class="ui dividing header"><?=_("Settings")?></h2>
+
+	<? include('widget/starter.html', {cfg=cfg, run_cfg=run_cfg, conf_list=conf_list}) ?>
+	<? include('widget/conf.html', {cfg=run_cfg}) ?>
+</div>

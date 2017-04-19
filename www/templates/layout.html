@@ -1,0 +1,181 @@
+<!--[if lt IE 9]>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]--> 
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <link rel="icon" href="/static/favicon.ico" mce_href="/static/favicon.ico" type="image/x-icon">
+    <link rel="image_src" type="image/jpeg" href="/static/img/logo.png">
+
+    <title>KooIoT RDC Admin Page | <?=lwf.ctx.user and lwf.ctx.user.username or 'Guest'?> </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" type="text/css" href="/static/semantic/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/static/library/animate.css">
+
+    <script type="text/javascript" src="/static/library/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/library/jquery.form.min.js"></script>
+    <script type="text/javascript" src="/static/library/jquery.nicescroll.min.js"></script>
+
+</head>
+
+<body>
+    <div class="ui fixed top menu">
+        <a href="javascript:void(0)" class="icon active item" id="hideToggle"><h3><i class="chevron left icon"></i></h3></a>
+        <a href="javascript:void(0)" class="icon active item" id="showToggle"><h3><i class="chevron right icon"></i></h3></a>
+        <a href="/" data-toggle="slide" class="item"><h3>KooIoT</h3></a>
+	<div class="menu right">
+	    <div tabindex="0" class="ui icon dropdown item" data-content="Select Language">
+                <i class="large world icon"></i>
+                <div tabindex="-1" class="menu transition hidden">
+                    <a class="item" href="/lang/en"><i class="leaf icon"></i> English</a>
+		    <a class="item" href="/lang/zh"><i class="leaf icon"></i> 中文(简体)</a>
+		</div>
+	    </div>
+	    <? if not lwf.ctx.user then ?>
+	    <a href="/user/login" class="icon item" data-content="Login">
+		<i class="large sign in icon"></i>
+	    </a>
+            <a href="http://www.kooiot.com" class="icon item">
+		    <img src="/static/img/logo.png" class="ui avatar image" alt="logo">
+	    </a>
+	    <? else ?>
+	    <? local avatar_path = '/static/upload/avatar/'..lwf.ctx.user.username..'.jpg' ?>
+            <a class="icon item pointer" data-toggle="popup" data-content="#mail" data-position="bottom right">
+		    <i class="mail icon"></i>
+	    </a>
+            <div id="mail" class="ui fluid popup" style="min-width:400px;padding-top:30px;">
+                <div class="ui divided items">
+                    <div class="item">
+                        <img src="http://semantic-ui.com/images/avatar/large/stevie.jpg" class="ui avatar image">
+                        <div class="content">
+                            <a class="header">KooIoT</a>
+                            <div class="description">
+                                Welcome to <a>KooIoT Web</a>...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui divider"></div>
+		<a href="/user/mail" class="ui right floated tiny button"><?=_('All Mails')?></a>
+            </div>
+            <a class="icon item pointer" data-toggle="popup" data-content="#notif" data-position="bottom right">
+		    <i class="bell icon"></i>
+	    </a>
+            <div id="notif" class="ui fluid popup" style="min-width:400px;padding-top:30px;">
+                <div class="ui divided items">
+                    <div class="item">
+                        <div class="content">
+                            <i class="bell icon"></i> Device appear offline,
+                            <div class="extra content">
+                                Sunday, 20-03-2016
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui divider"></div>
+		<a href="/user/msg" class="ui right floated tiny button"><?=_('All Messages')?></a>
+            </div>
+            <a class="icon item pointer" data-toggle="popup" data-content="#user" data-position="bottom right">
+		<img src="<?=avatar_path?>" class="ui avatar image" alt="">
+	    </a>
+            <div id="user" class="ui popup">
+                <div class="ui secondary vertical menu">
+		    <a href="/user/profile" class="item"><?=_('Profile')?> <i class="user icon"></i></a>
+		    <a href="/user/setting" class="item"><?=_('Settings')?> <i class="settings icon"></i></a>
+		    <a href="/user/mail" class="item"><?=_('Mails')?> <i class="mail icon"></i><div class="ui inverted label">2</div></a>
+		    <a href="/user/msg" class="item"><?=_('Messages')?> <i class="bell icon"></i><div class="ui inverted label">25</div></a>
+                    <div class="ui divider"></div>
+		    <a href="/user/logout" class="item"><?=_('Logout')?> <i class="sign out icon"></i></a>
+                </div>
+            </div>
+	    <? end ?>
+        </div>
+    </div>
+    <div class="pusher">
+        <div class="ui fluid container">
+            <div class="ui two column grid">
+	    	<? if lwf.ctx.user then ?>
+		<? local avatar_path = '/static/upload/avatar/'..lwf.ctx.user.username..'.jpg' ?>
+                <div class="side menu" id="sideMenu">
+                    <div align="center" class="profile">
+                        <br>
+                        <a href="/user/profile"><img src="<?=avatar_path?>" alt="Avatar" class="ui circular image" width="150px" height="150px"></a>
+			<div class="ui white header"><?=lwf.ctx.user.meta['fname'] or lwf.ctx.user.username?></div>
+                        <div class="ui divider"></div>
+                    </div>
+                    <div class="ui fluid vertical menu" id="verticalMenu">
+                        <a href="/" class="item"><i class="dashboard icon"></i> <span><?=_('Dashboard')?></span></a>
+			<a href="/settings" class="item"><i class="settings icon"></i> <span><?=_('Settings')?></span></a>
+                        <a href="/devices" class="item"><i class="record icon"></i> <span><?=_('Devices')?></span></a>
+                        <a href="/streams" class="item"><i class="dropbox icon"></i> <span><?=_('Streams')?></span></a>
+                        <a href="/tasks" class="item"><i class="tasks icon"></i> <span><?=_('Tasks')?></span></a>
+                        <a href="/about" class="item"><i class="file icon"></i> <span><?=_('About')?></span></a>
+                        <a href="http://help.kooiot.com" class="item"><i class="help icon"></i> <span><?=_('Help')?></span></a>
+                    </div>
+                </div>
+		<? else ?>
+                <div class="side menu" id="sideMenu">
+                    <div align="center" class="profile">
+                        <br>
+                        <a href=""><img src="/static/img/logo.png" alt="logo" class="ui circular image" width="150px"></a>
+                        <div class="ui white header">RDC Admin Web</div>
+                        <div class="ui divider"></div>
+                    </div>
+                    <div class="ui fluid vertical menu" id="verticalMenu">
+			<a href="/user/login" class="item"><i class="sign in icon"></i> <span><?=_('Login')?></span></a>
+                        <a href="http://help.kooiot.com" class="item"><i class="help icon"></i> <span><?=_('Help')?></span></a>
+                    </div>
+                </div>
+		<? end ?>
+                <div class="sixteen wide column" id="content">
+		    <div style="min-height:450px;padding-top:10px;">
+		    	<? =content() ?>
+		    </div>
+                    <div class="ui divider"></div>
+                    <div align="center">
+			<div class="ui stackable divided relaxed grid">
+				<div class="eight wide column">
+					<h3 class="ui header"><?=_('Help Make KooIoT Better')?></h3>
+					<p><?=_('KooIoT Platform. Please follow us on GitHub!!!')?></p>
+				</div>
+				<div class="four wide column">
+					<h5 class="ui teal header"><?=_('Contribute')?></h5>
+					<div class="ui link list">
+						<a class="item" href="https://www.transifex.com/organization/kooiot_rdc/" target="_blank"><?=_('Translation Hub')?></a>
+						<a class="item" href="http://forum.kooiot.com/issues" target="_blank"><?=_('Issue Tracker')?></a>
+						<a class="item" href="http://forum.kooiot.com/cla.html" target="_blank"><?=_('CLA')?></a>
+						<a class="item" href="http://forum.kooiot.com/app.html" target="_blank"><?=_('Create Applicatoin')?></a>
+					</div>
+				</div>
+				<div class="four wide column">
+					<h5 class="ui teal header"><?=_('KooIoT Network')?></h5>
+					<div class="ui link list">
+						<a class="item" href="http://docs.kooiot.com/" target="_blank"><?=_('User Documents')?></a>
+						<a class="item" href="http://docs.kooiot.com/" target="_blank"><?=_('Development Reference')?></a>
+						<a class="disabled item"><?=_('Application')?></a>
+						<a class="disabled item"><?=_('Device Template')?></a>
+					</div>
+				</div>
+			</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="/static/semantic/semantic.min.js"></script>
+    <script type="text/javascript" src="/static/library/less.min.js"></script>
+
+    <script type="text/javascript" src="/static/js/main.js"></script>
+    <script type="text/javascript" src="/static/js/validate-form.js"></script>
+    <script type="text/javascript" src="/static/js/message.js"></script>
+    <script type="text/javascript" src="/static/js/table.js"></script>
+</body>
+</html>

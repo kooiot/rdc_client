@@ -1,0 +1,107 @@
+
+<? extend 'layout.html' ?>
+<div class="tab header segment">
+	<div class="container">
+		<div class="introduction">
+			<h1 class="ui dividing header">
+				<?=_("Your Mails")?>
+			</h1>
+			<br>
+		</div>
+	</div>
+</div>
+<div class="main container">
+	<form class="ui form" method="post">
+		<input type="hidden" name="action" value="add"/>
+		<div class="inline fields">
+			<div class="inline field">
+				<label><?=_("Device UUID Key")?>:</label>
+				<input type="text" name="key" placeholder="<?=_('Key')?>..." value=""/>
+			</div>
+			<div class="field">
+				<input type="text" name="alias" placeholder="<?=_('Alias')?>..." value=""/>
+			</div>
+			<div class="field">
+				<input class="ui small teal submit button" type="submit" value="<?=_('Add')?>"/>
+			</div>
+		</div>
+	</form>
+
+	<table class="ui sortable table segment">
+		<thead>
+			<tr>
+				<th><?=_("NO.")?></th>
+				<th><?=_("KEY")?></th>
+				<th><?=_("ALIAS")?></th>
+				<th><?=_("Controls")?></th>
+			</tr>
+		</thead>
+		<tbody>
+		<?
+		if not alias_list then alias_list = {} end
+		for i, key in pairs(userkeys) do
+		?>
+		<tr>
+			<td><?=tostring(i)?></td>
+			<td>
+				<?=key?>
+			</td>
+			<td>
+				<div class="ui action input">
+					<input type="text" value="<?=alias_list[key]?>"/>
+					<button class="ui button" onclick="change_alias('<?=key?')"> <?=_("Change")?> </button>
+				</div>
+			</td>
+			<td>
+				<a class="ui tiny button" onclick="delete_key('<?=key?>')"> <?=_("Delete")?></a>
+			</td>
+		</tr>
+		<? end ?>
+
+		</tbody>
+		<tfoot>
+			<tr>
+				<th>Total <?=#userkeys?></th>
+				<th></th>
+				<th></th>
+				<th></th>
+			</tr>
+		</tfoot>
+	</table>
+
+	<div class="ui attached message">
+		<div class="header">
+			<div id="status">
+				<? = err ?>
+			</div>
+		</div>
+	</div>
+
+
+	<script>
+		function delete_key(key) {
+			$.post("", {action:'delete', key:key}, function(data) {
+					alert('<?=_("Key has been deleted")?>');
+					window.location.reload();
+					})
+			.done(function() {
+					})
+			.fail(function() {
+					alert("<?=_('Failed to send delete key request!!')?>");
+					});
+		}
+		$(document).ready(function() {
+				$('form').ajaxForm({
+					success: function(data) {
+						alert('<?=_("Request compeleted")?>');
+						window.location.reload();
+					},
+					error: function(data) {
+						$('#status').html('<i>' + data.responseText + '</i>');
+					},
+				});
+		});
+
+	</script>
+</div>
+

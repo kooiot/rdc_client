@@ -1,0 +1,20 @@
+
+<? extend 'layout.html' ?>
+<div class="tab header segment">
+	<div class="container">
+		<div class="introduction">
+			<h1 class="ui dividing header">
+				<?=_("User details")?>
+			</h1>
+			<br>
+		</div>
+	</div>
+</div>
+<div class="main container">
+	<h2 class="ui dividing header">User:</h2>
+
+	<div class="label"> <?=username?> </div>
+	<? local img_link = '/static/upload/avatar/'..lwf.ctx.user.username..'.jpg' ?>
+	<img class="circular ui small image" src="<?=img_link?>">
+
+</div>

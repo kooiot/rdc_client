@@ -1,0 +1,29 @@
+<? extend 'layout.html' ?>
+<div class="main container">
+	<div class="ui segment">
+		<h2 class="ui dividing header"><?=_("Configuration")?></h2>
+		<table class="ui table">
+			<thead>
+				<tr><th><?=_("Mode")?></th><th><?=_("Conf")?></th><th><?=_("Port")?></td></tr>
+			</thead>
+			<tbody>
+				<tr><td><?=cfg.mode?></td><td><?=cfg.conf?></td><td><?=cfg.port?></td></tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="ui segment">
+		<h2 class="ui dividing header"><?=_("System Information")?></h2>
+		<table class="ui table">
+			<thead>
+				<tr><th></th><th><?=_("Desc")?></th><th><?=_("Content")?></td></tr>
+			</thead>
+			<tbody>
+				<? for key,v in pairs(env) do ?>
+				<? for k,v in pairs(v) do ?>
+				<tr><td><?=key?></td><td><?=tostring(k)?></td><td><?=tostring(v)?></td></tr>
+				<? end ?>
+				<? end ?>
+			</tbody>
+		</table>
+	</div>
+</div>

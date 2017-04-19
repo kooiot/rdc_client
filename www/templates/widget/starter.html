@@ -1,0 +1,78 @@
+<div class="ui attached message">
+	<div class="header">
+		<h2> <i class="settings icon"></i> <?=_("Starter")?> </h2>
+	</div>
+	<div class="ui inverted segment">
+		<div class="ui small olive inverted statistic">
+			<div class="value">
+				<?=_(run_cfg.mode)?>
+			</div>
+			<div class="label">
+				<?=_("Mode")?>
+			</div>
+		</div>
+		<div class="ui small green inverted statistic">
+			<div class="value">
+				<?=run_cfg.conf?>
+			</div>
+			<div class="label">
+				<?=_("Conf")?>
+			</div>
+		</div>
+		<div class="ui small blue inverted statistic">
+			<div class="value">
+				<?=uptime or 0?>
+			</div>
+			<div class="label">
+				<?=_("Uptime")?>
+			</div>
+		</div>
+		<div class="ui small red inverted statistic">
+			<div class="value">
+				27
+			</div>
+			<div class="label">
+				<?=_("Memory")?>
+			</div>
+		</div>
+	</div>
+</div>
+<form class="ui form attached fuild segment" action="/cfg/starter" method="post" enctype="multipart/form-data">
+	<div class="fields">
+		<div class="field">
+			<label><?=_("Mode")?></label>
+			<select class="ui dropdown" name="mode"> 
+				<option value="None" <?='None'==cfg.mode and 'selected="selected"' or ''?>>
+				<?=_("None")?>
+				</option> 
+				<option value="Server" <?='Server'==cfg.mode and 'selected="selected"' or ''?>>
+				<?=_("Server")?>
+				</option> 
+				<option value="Gate" <?='Gate'==cfg.mode and 'selected="selected"' or ''?>>
+				<?=_("Gate")?>
+				</option> 
+			</select>
+		</div>
+		<div class="field">
+			<label><?=_("Conf")?></label>
+			<select class="ui dropdown" name="conf"> 
+				<? for _,v in ipairs(conf_list) do ?>
+					<? if v == cfg.conf then ?>
+					<option value="<?=v?>" selected="selected"><?=v?></option> 
+					<? else ?>
+					<option value="<?=v?>"><?=v?></option>
+					<? end ?>
+				<? end ?>
+			</select>
+
+		</div>
+	</div>
+	<button class="ui blue button" type="submit"><?=_("Commit")?></button>
+</form>
+<? if run_cfg.mode ~= 'None' and run_cfg.mode ~= cfg.mode then ?>
+<div class="ui attached message">
+	<div class="header">
+		<h2> <i class="settings icon"></i> <?=_("You need to restart system to apply MODE change!")?> </h2>
+	</div>
+</div>
+<? end ?>

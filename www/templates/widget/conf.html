@@ -1,0 +1,73 @@
+<div class="ui attached message">
+	<div class="header">
+		<h2> <i class="settings icon"></i> <?=_("Conf")?> </h2>
+	</div>
+</div>
+<form class="ui form attached fluid segment" id="conf_form" action="/cfg/conf" method="post" enctype="multipart/form-data">
+	<div class="fields">
+		<input name="conf" value="<?=cfg.conf?>" type="hidden">
+		<div class="field">
+			<label><?=_("Host")?></label>
+			<input id="conf_host" name="host" type="text">
+		</div>
+		<div class="field">
+			<label><?=_("Port")?></label>
+			<input id="conf_port" name="port" type="number">
+		</div>
+		<div class="field">
+			<label><?=_("ID")?></label>
+			<input id="conf_id" name="id" type="text">
+		</div>
+		<div class="field">
+			<label><?=_("Realm")?></label>
+			<input id="conf_realm" name="realm" type="text">
+		</div>
+	</div>
+	<div class="inline field">
+		<div class="ui toggle checkbox">
+			<label><?=_("Watch File")?></label>
+			<input id="conf_watch" name="watch_file" type="checkbox"  class="hidden">
+		</div>
+	</div>
+
+	<div class="ui teal button" onclick="load_cfg_conf('<?=cfg.conf?>')"><?=_("Load")?></div>
+	<button class="ui blue button" type="submit"><?=_("Commit")?></button>
+</form>
+<div class="ui attached message">
+	<div class="header">
+		<div id="status">
+			<? = err ?>
+		</div>
+	</div>
+</div>
+
+<script>
+function load_cfg_conf(conf) {
+	$.get("/cfg/conf", {conf:conf}, function(data, status) {
+		$('#conf_host').val(data.host);
+		$('#conf_port').val(data.port);
+		$('#conf_id').val(data.id);
+		$('#conf_realm').val(data.realm);
+		$('#conf_watch').attr("checked", data.watch_file);
+	})
+	.done(function() {
+		$('#status').html('<i>Configuration Loaded</i>');
+	})
+	.fail(function() {
+		$('#status').html('<i>Loading configruation failed</i>');
+	});
+}
+$(document).ready(function() {
+	$('#conf_form').ajaxForm({
+		success: function(data) {
+			$('#status').html('<i>' + data + '</i>');
+		},
+		error: function(data) {
+			$('#status').html('<i>' + data.responseText + '</i>');
+		},
+	});
+	load_cfg_conf("<?=cfg.conf?>")
+});
+
+</script>
+

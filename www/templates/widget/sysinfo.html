@@ -1,0 +1,69 @@
+<div class="ui attached message">
+	<div class="header">
+		<h2> <i class="settings icon"></i> <?=_("System Information")?> </h2>
+	</div>
+</div>
+<div class="ui attached inverted segment">
+	<div class="ui olive inverted statistic">
+		<div class="value">
+			<?=_(run_cfg.mode)?>
+		</div>
+		<div class="label">
+			<?=_("Mode")?>
+		</div>
+	</div>
+	<div class="ui green inverted statistic">
+		<div class="value">
+			<?=run_cfg.conf?>
+		</div>
+		<div class="label">
+			<?=_("Conf")?>
+		</div>
+	</div>
+	<div class="ui blue inverted statistic">
+		<div class="value">
+			<?=uptime or 0?>
+		</div>
+		<div class="label">
+			<?=_("Uptime")?>
+		</div>
+	</div>
+	<div class="ui red inverted statistic">
+		<div class="value">
+			27
+		</div>
+		<div class="label">
+			<?=_("Memory")?>
+		</div>
+	</div>
+	<? if conns then ?>
+	<div class="ui teal inverted statistic">
+		<div class="value">
+			<?=#conns ?>
+		</div>
+		<div class="label">
+			<?=_("Servers")?>
+		</div>
+	</div>
+	<? end ?>
+	<? if nodes then ?>
+	<div class="ui teal inverted statistic">
+		<div class="value">
+			<?=#nodes ?>
+		</div>
+		<div class="label">
+			<?=_("Nodes")?>
+		</div>
+	</div>
+	<? end ?>
+	<? if ver then ?>
+	<div class="ui teal inverted statistic">
+		<div class="value">
+			<?=ver.num ?>
+		</div>
+		<div class="label">
+			<?=_("Version")?>
+		</div>
+	</div>
+	<? end ?>
+</div>

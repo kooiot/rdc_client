@@ -1,0 +1,8 @@
+<? extend 'layout.html' ?>
+<div class="dashboard container">
+	<? if lwf.ctx.user then ?>
+		<? include('widget/devlist.html', {list=devlist}) ?>
+		<div class="ui divider"> </div>
+		<? include('widget/applist.html', {list=applist}) ?>
+	<? end ?>
+</div>

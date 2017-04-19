@@ -1,0 +1,43 @@
+<? extend 'layout.html' ?>
+<div class="main container">
+	<h2 class="ui dividing header"><?=_("System Management")?></h2>
+
+	<div class="ui segment">
+		<h2 class="ui dividing header"><?=_("System Controls")?></h2>
+		<form class="ui form" method="post">
+			<div class="inline fields">
+				<div class="field">
+					<label><?=_("Password")?></label>
+					<input name="password" type="password" place_holder="Password"/>
+				</div>
+				<input type="submit" class="ui red submit button" value="<?=_('Restart')?>"/>
+			</div>
+		</form>
+	</div>
+
+	<div class="ui icon message">
+		<i class="inbox icon"></i>
+		<div class="content">
+			<div class="header">
+				<div id="status">
+					<? = err ?>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</div>
+
+<script>
+$(document).ready(function() {
+	$('form').ajaxForm({
+		success: function(data) {
+			$('#status').html('<i>' + data + '</i>');
+		},
+		error: function(data) {
+			$('#status').html('<i>' + data.responseText + '</i>');
+		},
+	});
+});
+</script>
