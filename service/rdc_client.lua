@@ -3,7 +3,9 @@ local socket = require 'socket'
 local crypt = require 'crypt'
 local log = require 'utils.log'
 
-local TIMEOUT = 100 * 5
+local TIMEOUT = 100 * 5 -- five seconds
+local HB_TIMEOUT = 10 * 3 -- heartbeat timeout
+local last_hb = 0
 
 local function load_token()
 	return skynet.call("CFG", "lua", "get", "RDC.Cient.token") or {
@@ -36,7 +38,7 @@ end
 
 local handler = {
 	heartbeat = function(args)
-		print('HEARTBEAT')
+		last_hb = os.time()
 	end
 }
 
@@ -90,12 +92,16 @@ local function start_gate_conn(login, server, subid, secret, index)
 
 	local gate_client = require 'client.gate':new(make_sock(fd), handler)
 	gate_client:send_request("handshake")
+	last_hb = os.time()
 	local fd_ok = true
 	local err = nil
 	while fd_ok do
 		fd_ok, err = pcall(gate_client.dispatch_package, gate_client)
 		if not fd_ok then
 			log.trace(err)
+		end
+		if last_hb - os.time() > HB_TIMEOUT then
+			assert(false, "Heartbeat Timeout")
 		end
 	end
 
