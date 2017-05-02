@@ -5,14 +5,16 @@ local port_map = {}
 local thread_map = {}
 local serial = {}
 
+--[[
 skynet.PTYPE_SERIAL = 99
 
 skynet.register_protocol({
 	name = "serial",
 	id = skynet.PTYPE_SERIAL,
 })
+]]--
 
-seiral.open = function(port, baudrate, bytesize, parity, stopbits, flowcontrol)
+serial.open = function(port, baudrate, bytesize, parity, stopbits, flowcontrol)
 	assert(port, "Port is requried")
 	local opts = {
 		baud = '_'..(baudrate or 9600),
@@ -26,8 +28,12 @@ seiral.open = function(port, baudrate, bytesize, parity, stopbits, flowcontrol)
 	if not p then
 		return nil, err
 	end
+	local ok, err = p:open()
+	if not ok then
+		return nil, err
+	end
 
-	local fd = p:fd()
+	local fd = p._p:fd()
 	assert(not port_map[fd])
 	port_map[fd] = p
 	return fd
@@ -71,11 +77,14 @@ serial.start = function(fd)
 		skynet.fork(function()
 			thread_map[fd] = address
 			while true do
-				local data, err = port:read(100, 100)	
+				local data, err = port:read(100, 1000)	
 				if not data then
 					break
 				end
-				skynet.send(address, "serial", fd, data, err)
+				if string.len(data) > 0 then
+					print("SERIAL:", data, err)
+					skynet.send(address, "lua", "serial", fd, data, err)
+				end
 			end
 			thread_map[fd] = nil
 		end)
