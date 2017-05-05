@@ -1,18 +1,7 @@
 local skynet = require 'skynet'
 local rs232 = require 'rs232'
 
-local port_map = {}
-local thread_map = {}
 local serial = {}
-
---[[
-skynet.PTYPE_SERIAL = 99
-
-skynet.register_protocol({
-	name = "serial",
-	id = skynet.PTYPE_SERIAL,
-})
-]]--
 
 serial.open = function(port, baudrate, bytesize, parity, stopbits, flowcontrol)
 	assert(port, "Port is requried")
@@ -33,15 +22,11 @@ serial.open = function(port, baudrate, bytesize, parity, stopbits, flowcontrol)
 		return nil, err
 	end
 
-	local fd = p._p:fd()
-	assert(not port_map[fd])
-	port_map[fd] = p
-	return fd
+	return p
 end
 
 local function bind_func(serial, name)
-	serial[name] = function(fd, ...)
-		local port = port_map[fd]
+	serial[name] = function(port, ...)
 		assert(port, "port does not exits")
 		return port[name](port, ...)
 	end
@@ -54,7 +39,10 @@ bind_func(serial, "flush")
 bind_func(serial, "in_queue_clear")
 bind_func(serial, "in_queue")
 bind_func(serial, "device")
-bind_func(serial, "fd")
+--bind_func(serial, "fd")
+serial.fd = function(port)
+	return port._p:fd()
+end
 bind_func(serial, "set_baud_rate")
 bind_func(serial, "baud_rate")
 bind_func(serial, "set_data_bits")
@@ -68,27 +56,21 @@ bind_func(serial, "dtr")
 bind_func(serial, "set_rts")
 bind_func(serial, "rts")
 
-serial.start = function(fd)
-	local fd = fd
-	local port = port_map[fd]
-	local address = skynet.self()
+serial.start = function(port, cb)
 	assert(port)
-	if not thread_map[fd] then
-		skynet.fork(function()
-			thread_map[fd] = address
-			while true do
-				local data, err = port:read(100, 1000)	
-				if not data then
-					break
-				end
-				if string.len(data) > 0 then
-					print("SERIAL:", data, err)
-					skynet.send(address, "lua", "serial", fd, data, err)
-				end
+	skynet.fork(function()
+		while true do
+			local data, err = port:read(100, 50)
+			if not data then
+				break
 			end
-			thread_map[fd] = nil
-		end)
-	end
+			if string.len(data) > 0 then
+				print("SERIAL:", data, err)
+				cb(port, data, err)
+			end
+			skynet.sleep(5)
+		end
+	end)
 end
 
 return serial
