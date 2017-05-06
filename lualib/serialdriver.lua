@@ -1,32 +1,38 @@
 local skynet = require 'skynet'
 local rs232 = require 'rs232'
+local class = require 'middleclass'
 
-local serial = {}
+local serial = class("SerialClass")
 
-serial.open = function(port, baudrate, bytesize, parity, stopbits, flowcontrol)
+function serial:initialize(port, baudrate, bytesize, parity, stopbits, flowcontrol)
 	assert(port, "Port is requried")
-	local opts = {
+	self._port_name = port
+	self._opts = {
 		baud = '_'..(baudrate or 9600),
 		data_bits = '_'..(bytesize or 8),
 		parity = string.upper(parity or "NONE"),
 		stop_bits = '_'..(stopbits or 1),
 		flow_control = string.upper(flowcontrol or "OFF")
 	}
+end
 
-	local p, err = rs232.port(port, opts)
-	if not p then
+function serial:open()
+	local port, err = rs232.port(self._port_name, self._opts)
+	if not port then
 		return nil, err
 	end
-	local ok, err = p:open()
+	local ok, err = port:open()
 	if not ok then
 		return nil, err
 	end
+	self._port = port
 
-	return p
+	return port
 end
 
 local function bind_func(serial, name)
-	serial[name] = function(port, ...)
+	serial[name] = function(obj, ...)
+		local port = obj._port
 		assert(port, "port does not exits")
 		return port[name](port, ...)
 	end
@@ -40,8 +46,9 @@ bind_func(serial, "in_queue_clear")
 bind_func(serial, "in_queue")
 bind_func(serial, "device")
 --bind_func(serial, "fd")
-serial.fd = function(port)
-	return port._p:fd()
+function serial:fd()
+	assert(self._port)
+	return self._port._p:fd()
 end
 bind_func(serial, "set_baud_rate")
 bind_func(serial, "baud_rate")
@@ -56,7 +63,8 @@ bind_func(serial, "dtr")
 bind_func(serial, "set_rts")
 bind_func(serial, "rts")
 
-serial.start = function(port, cb)
+function serial:start(cb)
+	local port = self._port
 	assert(port)
 	skynet.fork(function()
 		while true do
@@ -66,7 +74,7 @@ serial.start = function(port, cb)
 			end
 			if string.len(data) > 0 then
 				print("SERIAL:", data, err)
-				cb(port, data, err)
+				cb(data, err)
 			end
 			skynet.sleep(5)
 		end
