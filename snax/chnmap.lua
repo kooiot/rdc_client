@@ -1,6 +1,7 @@
 local skynet = require 'skynet'
 
-local chnmap = nil
+local chnmap = {}
+local cfgmap = {}
 
 local create_handler = {
 	serial = function(name, cfg)
@@ -19,18 +20,36 @@ function response.create(name, cfg)
 	if not handler then
 		return nil, "Type "..type_name.." is not supported"
 	end
-	return handler(cfg)
+	local port, err = handler(cfg)
+	if port then
+		chnmap[name] = port
+		cfgmap[name] = cfg
+	end
+	return port, err
 end
 
 function response.destroy(name)
+	local channel = chnmap[name]
+	if not channel then
+		return nil, "Channel "..name.." does not exits!"
+	end
+	channel:stop()
+	chnmap[name] = nil
+	cfgmap[name] = nil
+	return true
+end
+
+function response.list()
+	return cfgmap
 end
 
 function init(port, ...)
-	chnmap = {}
 end
 
 function exit(...)
 	for k,v in chnmap do
 		v:stop()
 	end
+	chnmap = {}
+	cfgmap = {}
 end
