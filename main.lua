@@ -15,6 +15,11 @@ skynet.start(function()
 	skynet.newservice("adminweb", "0.0.0.0", 8091)
 	--skynet.newservice("rdc_client")
 	local serial = snax.newservice("serial", "/tmp/ttyS10")
-	print(serial.req.write("AABBCC"))
+	local r, err = serial.req.open()
+	if r then
+		serial.req.write("AABBCC")
+	else
+		skynet.error("Open Serial Failed With Error", err)
+	end
 	skynet.exit()
 end)
