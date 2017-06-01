@@ -85,9 +85,8 @@ local function start_gate_conn(login, server, subid, secret, index)
 	if tonumber(status:sub(1, 3)) ~= 200 then
 		socket.close(fd)
 		log.error("Connect to gate failed", status)
-		return skynet.timeout(TIMEOUT, function() 
-			return start_gate_conn(login, server, subid, secret, index + 1) 
-		end)
+		skynet.fork(start_work)
+		return
 	end
 
 	local gate_client = require 'client.gate':new(make_sock(fd), handler)

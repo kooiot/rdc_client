@@ -1,10 +1,20 @@
 local skynet = require 'skynet'
+local serial_loaded, serial_driver = pcall(require, 'serialdriver')
 
 local chnmap = {}
 local cfgmap = {}
 
 local create_handler = {
 	serial = function(name, cfg)
+		if not serial_loaded then
+			return nil, "SerialDriver module not loaded"
+		end
+		local port = serial_driver:new(cfg.port)
+		local r, err = port:open()
+		if r then
+			return port
+		end
+		return nil, err
 	end
 	tcp = function(name, cfg)
 	end

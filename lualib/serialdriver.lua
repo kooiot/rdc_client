@@ -68,15 +68,16 @@ function serial:start(cb)
 	assert(port)
 	skynet.fork(function()
 		while true do
-			local data, err = port:read(100, 50)
-			if not data then
-				break
-			end
-			if string.len(data) > 0 then
-				print("SERIAL:", data, err)
+			local len, err = port:in_queue()
+			if len and len > 0 then
+				local data, err = port:read(len, 10)
+				print("SERIAL:", len, data, err)
+				if not data then
+					break
+				end
 				cb(data, err)
 			end
-			skynet.sleep(5)
+			skynet.sleep(1)
 		end
 	end)
 end

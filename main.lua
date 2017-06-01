@@ -13,13 +13,24 @@ skynet.start(function()
 	skynet.newservice("debug_console",7001)
 	skynet.newservice("cfg")
 	skynet.newservice("adminweb", "0.0.0.0", 8091)
-	--skynet.newservice("rdc_client")
+	skynet.newservice("rdc_client")
 	local serial = snax.newservice("serial", "/tmp/ttyS10")
-	local r, err = serial.req.open()
-	if r then
-		serial.req.write("AABBCC")
-	else
-		skynet.error("Open Serial Failed With Error", err)
-	end
-	skynet.exit()
+	local serial2 = snax.newservice("serial", "/tmp/ttyS11")
+
+	skynet.fork(function()
+		local r, err = serial.req.open()
+		if r then
+			serial.req.write("AABBCC")
+		else
+			skynet.error("Open Serial Failed With Error", err)
+		end
+		local r, err = serial2.req.open()
+		if r then
+			serial2.req.write("AABBCC")
+		else
+			skynet.error("Open Serial Failed With Error", err)
+		end
+
+		skynet.exit()
+	end)
 end)
