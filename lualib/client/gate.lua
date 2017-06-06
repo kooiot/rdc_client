@@ -60,8 +60,8 @@ function spclass:send_request(name, args, response_callback)
 	end
 end
 
-function spclass:__handle_request(name, args)
-	log.trace("REQUEST", name)
+function spclass:__handle_request(name, args, response)
+	log.trace("REQUEST", name, args, response)
 	if args then
 		for k,v in pairs(args) do
 			log.trace(k,v)
@@ -71,7 +71,13 @@ function spclass:__handle_request(name, args)
 	local h = self._handler[string.lower(name)] or function(args)
 		log.warning('COMMAND has no handler', name)
 	end
-	h(args)
+	local r = h(args)
+	print(r, response)
+	if r and response then
+		return response(r)
+	else
+		print("RESPONSE FUNCTION NIL")
+	end
 end
 
 function spclass:__handle_response(session, args)

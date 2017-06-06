@@ -1,5 +1,5 @@
 local skynet = require "skynet"
-local snax = require "snax"
+local snax = require "skynet.snax"
 local sprotoloader = require "sprotoloader"
 
 local is_windows = package.config:sub(1,1) == '\\'

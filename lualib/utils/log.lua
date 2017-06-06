@@ -20,7 +20,7 @@ if not inskynet then
 
 	return LOG
 else
-	local snax = require 'snax'
+	local snax = require 'skynet.snax'
 
 	local LOGGER
 	

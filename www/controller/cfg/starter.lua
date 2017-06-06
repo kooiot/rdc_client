@@ -1,5 +1,5 @@
 local skynet = require 'skynet'
-local snax = require 'snax'
+local snax = require 'skynet.snax'
 local lfs = require 'lfs'
 
 local get_info = function(req, res, path, err)

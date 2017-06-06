@@ -1,6 +1,6 @@
 local skynet = require 'skynet'
-local socket = require 'socket'
-local crypt = require 'crypt'
+local socket = require 'skynet.socket'
+local crypt = require 'skynet.crypt'
 local log = require 'utils.log'
 
 local TIMEOUT = 100 * 5 -- five seconds
@@ -39,7 +39,14 @@ end
 local handler = {
 	heartbeat = function(args)
 		last_hb = os.time()
-	end
+	end,
+	create = function(args)
+		print(args)
+		return {
+			result = true,
+			channel = 'xxxxx',
+		}
+	end,
 }
 
 local start_work
