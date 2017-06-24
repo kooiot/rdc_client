@@ -51,10 +51,18 @@ function spclass:initialize(sock, handler)
 end
 
 function spclass:send_request(name, args, response_callback)
+	-- handle optional parameter
+	if not response_callback and args then
+		if type(args) == 'function' then
+			response_callback = args
+			args = nil
+		end
+	end
+	assert(type(args) ~= 'function', "Request parameter cannot be function")
+
 	self._session = self._session + 1
 	local str = request(name, args, self._session)
 	send_package(self._sock, str)
-	log.debug("Request:", self._session)
 	if response_callback then
 		self._cbs[self._session] = response_callback
 	end
@@ -72,11 +80,10 @@ function spclass:__handle_request(name, args, response)
 		log.warning('COMMAND has no handler', name)
 	end
 	local r = h(args)
-	print(r, response)
 	if r and response then
-		return response(r)
+		send_package(self._sock, response(r))
 	else
-		print("RESPONSE FUNCTION NIL")
+		--print("RESPONSE FUNCTION NIL")
 	end
 end
 
@@ -88,10 +95,13 @@ function spclass:__handle_response(session, args)
 		end
 	end
 
-	if self._cbs[session] then
-		self._cbs[session](args)
-		self._cbs[session] = nil
+	cb = self._cbs[session]
+	if cb then
+		cb(args)
+	else
+		log.warning("Reponse missing callback handler")
 	end
+	self._cbs[session] = nil
 end
 
 function spclass:__handle_package(t, ...)

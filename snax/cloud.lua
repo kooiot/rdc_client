@@ -43,7 +43,7 @@ local handler = {
 		last_hb = os.time()
 	end,
 	create = function(args)
-		print(args)
+		log.debug("Channel create message received")
 		return {
 			result = true,
 			channel = 'xxxxx',
@@ -100,7 +100,9 @@ local function start_gate_conn(login, server, subid, secret, index)
 
 	conn_status = 'online'
 	local gate_client = require 'client.gate':new(make_sock(fd), handler)
-	gate_client:send_request("handshake")
+	gate_client:send_request("handshake", function(args) 
+		log.notice(args.msg)
+	end)
 	last_hb = os.time()
 	local fd_ok = true
 	local err = nil
