@@ -1,4 +1,5 @@
 local skynet = require 'skynet'
+local snax = require 'skynet.snax'
 local socket = require 'skynet.socket'
 local crypt = require 'skynet.crypt'
 local log = require 'utils.log'
@@ -6,6 +7,7 @@ local log = require 'utils.log'
 local TIMEOUT = 100 * 5 -- five seconds
 local HB_TIMEOUT = 10 * 3 -- heartbeat timeout
 local last_hb = 0
+local conn_status = 'offline'
 
 local function load_token()
 	return skynet.call("CFG", "lua", "get", "RDC.Cient.token") or {
@@ -96,6 +98,7 @@ local function start_gate_conn(login, server, subid, secret, index)
 		return
 	end
 
+	conn_status = 'online'
 	local gate_client = require 'client.gate':new(make_sock(fd), handler)
 	gate_client:send_request("handshake")
 	last_hb = os.time()
@@ -111,7 +114,9 @@ local function start_gate_conn(login, server, subid, secret, index)
 		end
 	end
 
-	log.warning("disconnect")
+	log.warning("Cloud connection disconnected")
+	conn_status = 'offline'
+
 	socket.close(fd)
 
 	return skynet.timeout(TIMEOUT, function() 
@@ -137,12 +142,21 @@ start_work = function()
 		log.error("Login failed", subid)
 		return skynet.timeout(TIMEOUT * 6, start_work)
 	end
+	conn_status = 'connected'
 
 	log.debug("login ok, subid=", subid)
 
 	return start_gate_conn(login, server, subid, secret)
 end
 
-skynet.start(function()
+function response.status()
+	return conn_status
+end
+
+function init(...)
 	skynet.fork(start_work)
-end)
+end
+
+function exit(...)
+end
+

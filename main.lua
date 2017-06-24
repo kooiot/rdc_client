@@ -12,8 +12,11 @@ skynet.start(function()
 	end
 	skynet.newservice("debug_console",7001)
 	skynet.newservice("cfg")
+
+	local cloud = snax.uniqueservice("cloud", "XXXXX")
+
 	skynet.newservice("adminweb", "0.0.0.0", 8091)
-	skynet.newservice("rdc_client")
+
 	local serial = snax.newservice("serial", "/tmp/ttyS10")
 	local serial2 = snax.newservice("serial", "/tmp/ttyS11")
 
