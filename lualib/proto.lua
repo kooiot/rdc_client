@@ -14,10 +14,60 @@ handshake 1 {
 	}
 }
 
+create 2 {
+	request {
+		device 0 : string
+		type 1 : string
+		param 2 : string 
+	}
+	response {
+		result 0 : boolean
+		channel 1 : string
+		msg 2 : string
+	}
+}
+
+destroy 3 {
+	request {
+		device 0 : string
+		type 1 : string
+		channel 2 : string
+	}
+}
+
 data 10 {
 	request {
 		channel 0 : string
 		data 1 : binary
+	}
+}
+
+.Device {
+	sn 0 : string
+	name 1 : string
+	desc 2 : string
+	status 3 : string
+}
+
+list_devices 21 {
+	request {
+		user 0 : string
+	}
+	response {
+		devices 0 : *Device
+	}
+}
+
+create_channel 22 {
+	request {
+		device 0 : string
+		type 1 : string
+		param 2 : string
+	}
+	response {
+		result 0 : boolean
+		channel 1 : string
+		msg 2 : string
 	}
 }
 
@@ -41,7 +91,7 @@ create 2 {
 	response {
 		result 0 : boolean
 		channel 1 : string
-		message 2 : string
+		msg 2 : string
 	}
 }
 
