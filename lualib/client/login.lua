@@ -1,4 +1,4 @@
-local crypt = require "skynet.crypt"
+local crypt = require "client.crypt"
 local class = require "middleclass"
 local log = require 'utils.log'
 
