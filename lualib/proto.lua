@@ -58,19 +58,6 @@ list_devices 21 {
 	}
 }
 
-create_channel 22 {
-	request {
-		device 0 : string
-		type 1 : string
-		param 2 : string
-	}
-	response {
-		result 0 : boolean
-		channel 1 : string
-		msg 2 : string
-	}
-}
-
 quit 99 {}
 
 ]]
@@ -85,8 +72,9 @@ heartbeat 1 {}
 
 create 2 {
 	request {
-		type 0 : string
-		param 1 : string 
+		device 0 : string
+		type 1 : string
+		param 2 : string 
 	}
 	response {
 		result 0 : boolean

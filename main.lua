@@ -17,6 +17,7 @@ skynet.start(function()
 
 	skynet.newservice("adminweb", "0.0.0.0", 8091)
 
+	--[[
 	local serial = snax.newservice("serial", "/tmp/ttyS10")
 	local serial2 = snax.newservice("serial", "/tmp/ttyS11")
 
@@ -36,4 +37,5 @@ skynet.start(function()
 
 		skynet.exit()
 	end)
+	]]--
 end)
