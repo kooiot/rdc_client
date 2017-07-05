@@ -69,12 +69,14 @@ function spclass:send_request(name, args, response_callback)
 end
 
 function spclass:__handle_request(name, args, response)
+	--[[
 	log.trace("REQUEST", name, args, response)
 	if args then
 		for k,v in pairs(args) do
 			log.trace(k,v)
 		end
 	end
+	]]--
 	
 	local h = self._handler[string.lower(name)] or function(args)
 		log.warning('COMMAND has no handler', name)
@@ -88,12 +90,14 @@ function spclass:__handle_request(name, args, response)
 end
 
 function spclass:__handle_response(session, args)
+	--[[
 	log.trace("RESPONSE", session)
 	if args then
 		for k,v in pairs(args) do
 			log.trace(k,v)
 		end
 	end
+	]]--
 
 	cb = self._cbs[session]
 	if cb then

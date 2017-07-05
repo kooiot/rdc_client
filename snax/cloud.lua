@@ -161,7 +161,7 @@ local function hb_check()
 				param = ""
 			}
 			gate_client:send_request("create", args, function(args)
-				log.notice(args.result, args.msg)
+				log.notice("Create channel result", args.result, args.msg)
 			end)
 		end
 	end
