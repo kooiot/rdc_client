@@ -8,6 +8,7 @@ local TIMEOUT = 100 * 5 -- five seconds
 local HB_TIMEOUT = 10 * 3 -- heartbeat timeout
 local last_hb = 0
 local conn_status = 'offline'
+local gate_client = nil
 
 local function load_token()
 	return skynet.call("CFG", "lua", "get", "RDC.Cient.token") or {
@@ -99,22 +100,16 @@ local function start_gate_conn(login, server, subid, secret, index)
 	end
 
 	conn_status = 'online'
-	local gate_client = require 'client.gate':new(make_sock(fd), handler)
+	gate_client = require 'client.gate':new(make_sock(fd), handler)
 	gate_client:send_request("handshake", function(args) 
 		log.notice(args.msg)
 	end)
-	last_hb = os.time()
-	local fd_ok = true
-	local err = nil
-	while fd_ok do
-		fd_ok, err = pcall(gate_client.dispatch_package, gate_client)
-		if not fd_ok then
-			log.trace(err)
-		end
-		if last_hb - os.time() > HB_TIMEOUT then
-			assert(false, "Heartbeat Timeout")
-		end
+
+	local ok, err = pcall(gate_client.dispatch_package, gate_client)
+	if not ok then
+		log.trace(err)
 	end
+	gate_client = nil
 
 	log.warning("Cloud connection disconnected")
 	conn_status = 'offline'
@@ -151,12 +146,37 @@ start_work = function()
 	return start_gate_conn(login, server, subid, secret)
 end
 
+local function hb_check()
+	local token = load_token()
+	last_hb = os.time()
+	while true do
+		skynet.sleep(100 * 5)
+		if conn_status == 'online' then
+			if last_hb - os.time() > HB_TIMEOUT then
+				assert(false, "Heartbeat Timeout")
+			end
+			local args = {
+				device = token.user,
+				ctype = "serial",
+				param = ""
+			}
+			print("CCCCCCCCC")
+			gate_client:send_request("create", args, function(args)
+				log.notice(args.result, args.msg)
+			end)
+		end
+	end
+
+
+end
+
 function response.status()
 	return conn_status
 end
 
 function init(...)
 	skynet.fork(start_work)
+	skynet.fork(hb_check)
 end
 
 function exit(...)
