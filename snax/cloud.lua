@@ -160,7 +160,6 @@ local function hb_check()
 				ctype = "serial",
 				param = ""
 			}
-			print("CCCCCCCCC")
 			gate_client:send_request("create", args, function(args)
 				log.notice(args.result, args.msg)
 			end)
