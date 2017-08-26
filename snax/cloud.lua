@@ -21,8 +21,8 @@ end
 local function load_server()
 	return skynet.call("CFG", "lua", "get", "RDC.Client.server") or {
 		ip = '127.0.0.1',
-		login = 8001,
-		gate = 8888,
+		login = 6001,
+		gate = 6888,
 	}
 end
 

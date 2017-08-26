@@ -92,7 +92,7 @@ assert(arg.n <= 2)
 
 skynet.start(function()
 	local ip = (arg.n == 2 and arg[1] or "0.0.0.0")
-	local port = tonumber(arg[arg.n] or 8090)
+	local port = tonumber(arg[arg.n] or 6080)
 
 	local agent = {}
 	for i= 1, 4 do

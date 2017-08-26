@@ -10,12 +10,12 @@ skynet.start(function()
 	if not is_windows and not skynet.getenv "daemon" then
 		local console = skynet.newservice("console")
 	end
-	skynet.newservice("debug_console",7001)
+	skynet.newservice("debug_console",6001)
 	skynet.newservice("cfg")
 
 	local cloud = snax.uniqueservice("cloud", "XXXXX")
 
-	skynet.newservice("adminweb", "0.0.0.0", 8091)
+	skynet.newservice("adminweb", "0.0.0.0", 6088)
 
 	--[[
 	local serial = snax.newservice("serial", "/tmp/ttyS10")
