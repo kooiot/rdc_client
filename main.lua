@@ -15,7 +15,7 @@ skynet.start(function()
 
 	local cloud = snax.uniqueservice("cloud", "XXXXX")
 
-	skynet.newservice("adminweb", "0.0.0.0", 6088)
+	skynet.newservice("adminweb", "0.0.0.0", 6081)
 
 	--[[
 	local serial = snax.newservice("serial", "/tmp/ttyS10")
