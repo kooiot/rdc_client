@@ -1,7 +1,7 @@
 local skynet = require "skynet.manager"
 local cjson = require "cjson.safe"
 
-local db_file = "cfg.json"
+local db_file = "client_cfg.json"
 local db = {}
 
 local command = {}

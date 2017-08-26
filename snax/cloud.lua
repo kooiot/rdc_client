@@ -21,7 +21,7 @@ end
 local function load_server()
 	return skynet.call("CFG", "lua", "get", "RDC.Client.server") or {
 		ip = '127.0.0.1',
-		login = 6001,
+		login = 6801,
 		gate = 6888,
 	}
 end
@@ -161,7 +161,7 @@ local function hb_check()
 				param = ""
 			}
 			gate_client:send_request("create", args, function(args)
-				log.notice("Create channel result", args.result, args.msg)
+				log.notice("Create channel result", args.result, args.msg or args.channel)
 			end)
 		end
 	end
